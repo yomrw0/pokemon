@@ -1,14 +1,14 @@
-import ditto from "./ditto.json"
+import React from "react";
+// import { createStore } from "redux";
+// import { Provider } from "react-redux";
+import Data from "./components/Data";
 
-function App() {
+// const store = createStore(rootReducer);
 
-  console.log(ditto)
-
-
+export default function App() {
   return (
     <>
+      <Data />
     </>
   );
 }
-
-export default App;
