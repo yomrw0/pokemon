@@ -1,8 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 
-
-export default function Data() {
+export default function Data(props) {
 
   const [number, setNumber] = useState('');
   const [name, setName] = useState('');
@@ -15,34 +14,27 @@ export default function Data() {
   const [genus, setGenus] = useState('');
   const [characteristics, setCharacteristics] = useState({ chara1: '', chara2: '' })
   const { chara1, chara2 } = characteristics;
+  const [image, setImage] = useState('');
 
 
   const pokeNumbers = async () => {
-    const pokeAPI = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1200&offset=0");
-    const pokeData = pokeAPI.data.results[0].url;
-    const datas = await axios.get(pokeData);
-    const bulbasaur = datas.data;
-    setNumber(bulbasaur.id);
-    setHeight(bulbasaur.height)
-    setWeight(bulbasaur.weight)
+    const info = await props.pokeInfo;
+    setNumber(info.id);
+    setHeight(info.height);
+    setWeight(info.weight);
   }
 
   const pokeName = async () => {
-    const pokeAPI = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1200&offset=0");
-    const pokeData = pokeAPI.data.results[0].url;
-    const datas = await axios.get(pokeData);
-    const bulbasaur = await axios.get(datas.data.species.url);
+    const info = await props.pokeInfo;
+    const bulbasaur = await axios.get(info.species.url);
     if (bulbasaur.data.names[2].language.name === "ko") {
       setName(bulbasaur.data.names[2].name);
     }
-
   }
 
   const pokeExplain = async () => {
-    const pokeAPI = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1200&offset=0");
-    const pokeData = pokeAPI.data.results[0].url;
-    const datas = await axios.get(pokeData);
-    const bulbasaur = await axios.get(datas.data.species.url);
+    const info = await props.pokeInfo;
+    const bulbasaur = await axios.get(info.species.url);
     const flavorText = bulbasaur.data.flavor_text_entries[75];
     if (flavorText.language.name === 'ko' && flavorText.version.name === 'sword') {
       setExplain(flavorText.flavor_text)
@@ -50,22 +42,17 @@ export default function Data() {
   }
 
   const pokeType = async () => {
-    const pokeAPI = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1200&offset=0");
-    const pokeData = pokeAPI.data.results[0].url;
-    const datas = await axios.get(pokeData);
-    const bulbasaur_0 = await axios.get(datas.data.types[0].type.url)
-    const bulbasaur_1 = await axios.get(datas.data.types[1].type.url)
+    const info = await props.pokeInfo;
+    const bulbasaur_0 = await axios.get(info.types[0].type.url)
+    const bulbasaur_1 = await axios.get(info.types[1].type.url)
     if (bulbasaur_1.data.names[1].language.name === 'ko' && bulbasaur_0.data.names[1].language.name === 'ko') {
       setType({ type1: bulbasaur_1.data.names[1].name, type2: bulbasaur_0.data.names[1].name })
     }
   }
 
   const pokeGender = async () => {
-    const pokeAPI = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1200&offset=0");
-    const pokeData = pokeAPI.data.results[0].url;
-    const datas = await axios.get(pokeData);
-    const bulbasaur = await axios.get(datas.data.species.url)
-    console.log(bulbasaur.data)
+    const info = await props.pokeInfo;
+    const bulbasaur = await axios.get(info.species.url)
     switch (bulbasaur.data.gender_rate) {
       case 0:
         setGender("수컷");
@@ -92,22 +79,25 @@ export default function Data() {
   }
 
   const pokeGenus = async () => {
-    const pokeAPI = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1200&offset=0");
-    const pokeData = pokeAPI.data.results[0].url;
-    const datas = await axios.get(pokeData);
-    const bulbasaur = await axios.get(datas.data.species.url)
+    const info = await props.pokeInfo;
+    const bulbasaur = await axios.get(info.species.url)
     if (bulbasaur.data.genera[1].language.name === 'ko') {
       setGenus(bulbasaur.data.genera[1].genus)
     }
   }
 
   const pokeCharacteristics = async () => {
-    const pokeAPI = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1200&offset=0");
-    const pokeData = pokeAPI.data.results[0].url;
-    const datas = await axios.get(pokeData);
-    const bulbasaur_0 = await axios.get(datas.data.abilities[0].ability.url)
-    const bulbasaur_1 = await axios.get(datas.data.abilities[1].ability.url)
+    const info = await props.pokeInfo;
+    const bulbasaur_0 = await axios.get(info.abilities[0].ability.url)
+    const bulbasaur_1 = await axios.get(info.abilities[1].ability.url)
     setCharacteristics({ chara1: bulbasaur_0.data.names[1].name, chara2: bulbasaur_1.data.names[1].name })
+  }
+
+  const pokeImage = async () => {
+    const info = await props.pokeInfo;
+    const bulbasaur = await axios.get(info.species.url);
+    setImage(info.sprites.other['official-artwork'].front_default)
+
   }
 
   useEffect(() => {
@@ -118,6 +108,7 @@ export default function Data() {
     pokeGender()
     pokeGenus()
     pokeCharacteristics()
+    pokeImage()
   }, [])
 
 
@@ -133,6 +124,7 @@ export default function Data() {
         <li>포켓몬 성별 = {gender}</li>
         <li>포켓몬 분류 = {genus}</li>
         <li>포켓몬 특성 = {chara1} {chara2}</li>
+        <li>포켓몬 이미지 = <img src={image}/></li>
       </ul>
     </>
   )
