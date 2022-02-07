@@ -1,9 +1,0 @@
-export const POKEMON_NUMBER;
-export const POKEMON_NAME;
-export const POKEMON_EXPLAIN;
-export const POKEMON_TYPE;
-export const POKEMON_HEIGHT;
-export const POKEMON_WEIGHT;
-export const POKEMON_GENDER;
-export const POKEMON_GENUS
-export const POKEMON_CHARACTERISTICS;
