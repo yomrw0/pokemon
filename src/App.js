@@ -4,7 +4,7 @@ import React from "react";
 
 export default function App() {
 
-  const PokeInfo = async () => {
+  const pokeInfo = async () => {
     const pokeAPI = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1200&offset=0");
     const pokeData = pokeAPI.data.results[0].url;
     const datas = await axios.get(pokeData);
@@ -13,6 +13,6 @@ export default function App() {
   }
 
   return (
-    <Data pokeInfo={PokeInfo()}/>
+    <Data pokeInfo={pokeInfo()}/>
   );
 }

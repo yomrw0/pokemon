@@ -3,37 +3,39 @@ import React, { useState, useEffect } from "react";
 
 export default function Data(props) {
 
-  const [number, setNumber] = useState('');
   const [name, setName] = useState('');
-  const [explain, setExplain] = useState('');
-  const [types, setType] = useState({ type0: '', type1: '' });
-  const { type0, type1 } = types;
+  const [genus, setGenus] = useState('');
+  const [image, setImage] = useState('');
+  const [number, setNumber] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('');
-  const [genus, setGenus] = useState('');
+  const [explain, setExplain] = useState('');
+  const [types, setType] = useState({ type0: '', type1: '' });
+  const { type0, type1 } = types;
   const [characteristics, setCharacteristics] = useState({ chara0: '', chara1: '' })
   const { chara0, chara1 } = characteristics;
-  const [image, setImage] = useState('');
+  
 
-
+  // 포켓몬 속성과 타입은 각각 1~2개씩이다.
   const getPokeInfo = async () => {
     const info = await props.pokeInfo;
     const chara_0 = await axios.get(info.abilities[0].ability.url)
     const chara_1 = await axios.get(info.abilities[1].ability.url)
-    const type_0 = await axios.get(info.types[0].type.url)
-    const type_1 = await axios.get(info.types[1].type.url)
-    const types_0 = type_0.data.names[1];
-    const types_1 = type_1.data.names[1];
+    const type_base_0 = await axios.get(info.types[0].type.url)
+    const type_base_1 = await axios.get(info.types[1].type.url)
+    const types_0 = type_base_0.data.names[1];
+    const types_1 = type_base_1.data.names[1];
+    
 
     setNumber(info.id);
     setHeight(info.height);
     setWeight(info.weight);
-    setImage(info.sprites.other['official-artwork'].front_default);
-    setCharacteristics({ chara0: chara_0.data.names[1].name, chara1: chara_1.data.names[1].name })
+    setImage(info.sprites.other['official-artwork'].front_default);    
     if (types_1.language.name === 'ko' && types_0.language.name === 'ko') {
       setType({ type0: types_1.name, type1: types_0.name })
     }
+    setCharacteristics({ chara0: chara_0.data.names[1].name, chara1: chara_1.data.names[1].name })
   }
 
   const getPokeDetailInfo = async () => {
@@ -100,7 +102,7 @@ export default function Data(props) {
         <li>포켓몬 성별 = {gender}</li>
         <li>포켓몬 분류 = {genus}</li>
         <li>포켓몬 특성 = {chara0} {chara1}</li>
-        <li>포켓몬 이미지 = <img src={image} /></li>
+        <img src={image} alt='포켓몬 이미지'/>
       </ul>
     </>
   )
