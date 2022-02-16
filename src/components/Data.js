@@ -20,32 +20,30 @@ export default function Data(props) {
   // 포켓몬 속성과 타입은 각각 1~2개씩이다.
   const getPokeInfo = async () => {
     const info = await props.pokeInfo;
-    const chara_0 = await axios.get(info.abilities[0].ability.url)
-    const chara_1 = await axios.get(info.abilities[1].ability.url)
-    const type_base_0 = await axios.get(info.types[0].type.url)
-    const type_base_1 = await axios.get(info.types[1].type.url)
-    const types_0 = type_base_0.data.names[1];
-    const types_1 = type_base_1.data.names[1];
-    
+
+    const chara_0 = await (await axios.get(info.abilities[0].ability.url)).data.names[1].name
+    const chara_1 = await (await axios.get(info.abilities[1].ability.url)).data.names[1].name
+    const types_0 = await (await axios.get(info.types[0].type.url)).data.names[1]
+    const types_1 = await (await axios.get(info.types[1].type.url)).data.names[1]
 
     setNumber(info.id);
     setHeight(info.height);
     setWeight(info.weight);
     setImage(info.sprites.other['official-artwork'].front_default);    
+    setCharacteristics({ chara0: chara_0, chara1: chara_1 })
     if (types_1.language.name === 'ko' && types_0.language.name === 'ko') {
       setType({ type0: types_1.name, type1: types_0.name })
     }
-    setCharacteristics({ chara0: chara_0.data.names[1].name, chara1: chara_1.data.names[1].name })
   }
 
   const getPokeDetailInfo = async () => {
     const info = await props.pokeInfo;
-    const species = await axios.get(info.species.url);
-    const flavorText = species.data.flavor_text_entries[75];
-    const genera = species.data.genera[1];
+    const species = await (await axios.get(info.species.url)).data;
+    const flavorText = species.flavor_text_entries[75];
+    const genera = species.genera[1];
 
-    if (species.data.names[2].language.name === "ko") {
-      setName(species.data.names[2].name);
+    if (species.names[2].language.name === "ko") {
+      setName(species.names[2].name);
     }
 
     if (flavorText.language.name === 'ko' && flavorText.version.name === 'sword') {
@@ -56,7 +54,7 @@ export default function Data(props) {
       setGenus(genera.genus)
     }
 
-    getPokeGender(species.data.gender_rate)
+    getPokeGender(species.gender_rate)
   }
 
   const getPokeGender = gender_rate => {
