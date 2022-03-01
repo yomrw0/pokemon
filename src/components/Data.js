@@ -3,58 +3,63 @@ import React, { useState, useEffect } from "react";
 
 export default function Data(props) {
 
-  const [number, setNumber] = useState('');
   const [name, setName] = useState('');
-  const [explain, setExplain] = useState('');
-  const [types, setType] = useState({ type0: '', type1: '' });
-  const { type0, type1 } = types;
+  const [genus, setGenus] = useState('');
+  const [image, setImage] = useState('');
+  const [number, setNumber] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('');
-  const [genus, setGenus] = useState('');
+  const [explain, setExplain] = useState('');
+  const [types, setType] = useState({ type0: '', type1: '' });
+  const { type0, type1 } = types;
   const [characteristics, setCharacteristics] = useState({ chara0: '', chara1: '' })
   const { chara0, chara1 } = characteristics;
-  const [image, setImage] = useState('');
-
-
-  const getPokeInfo = async () => {
+  const kor = 'ko';
+  
+  const getPokeProfile = async () => {
     const info = await props.pokeInfo;
-    const chara_0 = await axios.get(info.abilities[0].ability.url)
-    const chara_1 = await axios.get(info.abilities[1].ability.url)
-    const type_0 = await axios.get(info.types[0].type.url)
-    const type_1 = await axios.get(info.types[1].type.url)
-    const types_0 = type_0.data.names[1];
-    const types_1 = type_1.data.names[1];
 
     setNumber(info.id);
     setHeight(info.height);
     setWeight(info.weight);
-    setImage(info.sprites.other['official-artwork'].front_default);
-    setCharacteristics({ chara0: chara_0.data.names[1].name, chara1: chara_1.data.names[1].name })
-    if (types_1.language.name === 'ko' && types_0.language.name === 'ko') {
+    setImage(info.sprites.other['official-artwork'].front_default); 
+
+  }
+
+  // 포켓몬 속성과 타입은 각각 1~2개씩이다.
+  const getPokeInfo = async () => {
+    const types_0 = await (await axios.get(info.types[0].type.url)).data.names[1]
+    const types_1 = await (await axios.get(info.types[1].type.url)).data.names[1]
+    const chara_0 = await (await axios.get(info.abilities[0].ability.url)).data.names[1].name
+    const chara_1 = await (await axios.get(info.abilities[1].ability.url)).data.names[1].name
+
+    setCharacteristics({ chara0: chara_0, chara1: chara_1 })
+
+    if (types_1.language.name === kor && types_0.language.name === kor) {
       setType({ type0: types_1.name, type1: types_0.name })
     }
   }
 
   const getPokeDetailInfo = async () => {
     const info = await props.pokeInfo;
-    const species = await axios.get(info.species.url);
-    const flavorText = species.data.flavor_text_entries[75];
-    const genera = species.data.genera[1];
+    const species = await (await axios.get(info.species.url)).data;
+    const flavorText = species.flavor_text_entries[75];
+    const genera = species.genera[1];
 
-    if (species.data.names[2].language.name === "ko") {
-      setName(species.data.names[2].name);
+    if (species.names[2].language.name === kor) {
+      setName(species.names[2].name);
     }
 
-    if (flavorText.language.name === 'ko' && flavorText.version.name === 'sword') {
+    if (flavorText.language.name === kor && flavorText.version.name === 'sword') {
       setExplain(flavorText.flavor_text)
     }
 
-    if (genera.language.name === 'ko') {
+    if (genera.language.name === kor) {
       setGenus(genera.genus)
     }
 
-    getPokeGender(species.data.gender_rate)
+    getPokeGender(species.gender_rate)
   }
 
   const getPokeGender = gender_rate => {
@@ -84,6 +89,7 @@ export default function Data(props) {
   }
 
   useEffect(() => {
+    getPokeProfile()
     getPokeInfo()
     getPokeDetailInfo()
   }, [])
@@ -100,7 +106,7 @@ export default function Data(props) {
         <li>포켓몬 성별 = {gender}</li>
         <li>포켓몬 분류 = {genus}</li>
         <li>포켓몬 특성 = {chara0} {chara1}</li>
-        <li>포켓몬 이미지 = <img src={image} /></li>
+        <img src={image} alt='포켓몬 이미지'/>
       </ul>
     </>
   )
